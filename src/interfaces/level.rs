@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use super::game::{Target, Direction, Id};
+use super::{game::{Direction, Id}, player::Target};
 
 pub struct Room {
     name: String,

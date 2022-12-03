@@ -1,6 +1,6 @@
 use super::game::Id;
 
-enum BeingType {
+enum MobType {
     Npc,
     Monster,
     Animal
@@ -13,7 +13,7 @@ enum Affil {
 
 pub struct Mob{
     name: String, 
-    ty: BeingType, 
+    ty: MobType, 
     affil: Affil, 
     id: Id
 }
