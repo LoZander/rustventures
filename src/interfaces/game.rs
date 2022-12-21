@@ -37,13 +37,13 @@ pub enum Item {
 }
 
 pub type GameResult<T> = Result<T,String>;
-pub trait Game: Sized {
-    fn get_room(&self) -> &Room;
-    fn get_level(&self) -> &Level;
+pub trait Game<L: Level<R>, R: Room> {
+    fn get_room(&self) -> &R;
+    fn get_level(&self) -> &L;
     fn get_stats(&self) -> &Stats;
     fn get_items(&self) -> &[Item];
-    fn mov(self, dir: Direction) -> GameResult<Self>;
-    fn interact(self, act: Action) -> GameResult<Self>;
-    fn save(self, file: String) -> GameResult<Self>;
-    fn load(self, file: String) -> GameResult<Self>;
+    fn mov(self, dir: Direction) -> GameResult<Self> where Self: Sized;
+    fn interact(self, act: Action) -> GameResult<Self> where Self: Sized;
+    fn save(self, file: String) -> GameResult<Self> where Self: Sized;
+    fn load(self, file: String) -> GameResult<Self> where Self: Sized;
 }

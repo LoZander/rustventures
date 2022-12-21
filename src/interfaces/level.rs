@@ -1,17 +1,15 @@
-use std::collections::HashMap;
+use super::{game::Direction, player::Target};
 
-use super::{game::{Direction, Id}, player::Target};
-
-pub struct Room {
-    pub name: String,
-    pub desc: String,
-    pub targets: Vec<Target>,
-    pub adj: HashMap<Direction,Room>,
-    pub id: Id,
+pub trait Room {
+    fn name(&self) -> String;
+    fn description(&self) -> String;
+    fn targets(&self) -> &[Target];
+    fn adjacent_room(&self, direction: Direction) -> Option<&Self>;
 }
 
-pub struct Level {
-    pub name: String,
-    pub desc: String,
-    pub rooms: Vec<Room>,
+pub trait Level<R: Room> {
+    fn name(&self) -> String;
+    fn description(&self) -> String;
+    fn rooms(&self) -> &[R];
+    fn insert_room(self,room: impl Room);
 }
