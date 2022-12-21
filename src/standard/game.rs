@@ -1,19 +1,40 @@
+use std::collections::HashMap;
+
 use crate::interfaces::{level::{Level, Room}, game::{Item, Game, GameResult, Direction}, player::{Action, Stats}};
 
+use super::level::{LevelImpl, RoomImpl};
+
 struct GameImpl<'a> {
-    current_room: &'a Room,
+    current_room: &'a RoomImpl,
     items: Vec<Item>,
-    level: Level,
+    level: LevelImpl,
     stats: Stats,
 }
 
-impl <'a>Game for GameImpl<'a> {
+pub fn default<'a>() -> GameImpl<'a> {
+    let start_room = RoomImpl {};
+
+    let level = LevelImpl {
+        name: String::from("default"),
+        description: String::from("default level"),
+        rooms: vec![start_room],
+    };
+
+    GameImpl {
+        current_room: &start_room,
+        items: Vec::new(),
+        level: level,
+        stats: HashMap::new(),
+    }
+}
+
+impl <'a,L,R>Game<L,R> for GameImpl<'a> {
     
-    fn get_room(&self) -> &Room {
+    fn get_room(&self) -> &R {
         self.current_room
     }
     
-    fn get_level(&self) -> &Level {
+    fn get_level(&self) -> &L {
         &self.level
     }
     
@@ -27,8 +48,7 @@ impl <'a>Game for GameImpl<'a> {
 
     fn mov(self, dir: Direction) -> GameResult<Self> {
         let next = self.current_room
-                              .adj
-                              .get(&dir)
+                              .adjacent_room(dir)
                               .ok_or(format!("there is no room the {} direction", dir))?;
         let game = GameImpl {
             current_room: next,
