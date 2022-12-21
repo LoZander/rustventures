@@ -4,6 +4,7 @@ use super::{level::{Room, Level}, player::{Stat, Action, Stats}};
 
 #[derive(Hash)]
 #[derive(PartialEq,Eq)]
+#[derive(Clone,Copy)]
 pub enum Direction {
     Left,
     Right,
@@ -37,13 +38,17 @@ pub enum Item {
 }
 
 pub type GameResult<T> = Result<T,String>;
-pub trait Game<L: Level<R>, R: Room> {
-    fn get_room(&self) -> &R;
-    fn get_level(&self) -> &L;
-    fn get_stats(&self) -> &Stats;
-    fn get_items(&self) -> &[Item];
-    fn mov(self, dir: Direction) -> GameResult<Self> where Self: Sized;
-    fn interact(self, act: Action) -> GameResult<Self> where Self: Sized;
-    fn save(self, file: String) -> GameResult<Self> where Self: Sized;
-    fn load(self, file: String) -> GameResult<Self> where Self: Sized;
+pub trait Game<R,L> where 
+    R: Room,
+    L: Level<R>, 
+{
+    type Output;
+    fn room(&self) -> &R;
+    fn level(&self) -> &L;
+    fn stats(&self) -> &Stats;
+    fn items(&self) -> &[Item];
+    fn mov(self, dir: Direction) -> GameResult<Self::Output>;
+    fn interact(self, act: Action) -> GameResult<Self::Output>;
+    fn save(self, file: String) -> GameResult<Self::Output>;
+    fn load(self, file: String) -> GameResult<Self::Output>;
 }
