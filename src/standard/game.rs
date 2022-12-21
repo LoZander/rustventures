@@ -1,48 +1,62 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, rc::Rc};
 
 use crate::interfaces::{level::{Level, Room}, game::{Item, Game, GameResult, Direction}, player::{Action, Stats}};
 
 use super::level::{LevelImpl, RoomImpl};
 
-struct GameImpl<'a> {
-    current_room: &'a RoomImpl,
+pub struct GameImpl<R,L> where
+    R: Room,
+    L: Level<R>
+{
+    current_room: Rc<R>,
     items: Vec<Item>,
-    level: LevelImpl,
+    level: L,
     stats: Stats,
 }
 
-pub fn default<'a>() -> GameImpl<'a> {
-    let start_room = RoomImpl {};
+impl GameImpl<RoomImpl,LevelImpl> where
+{
+    pub fn new(name: String, description: String) -> GameImpl<RoomImpl,LevelImpl> {
+        let start_room = Rc::new(RoomImpl { 
+            name,
+            description,
+            targets: Vec::new(),
+            adjacent_rooms: HashMap::new(),
+        });
 
-    let level = LevelImpl {
-        name: String::from("default"),
-        description: String::from("default level"),
-        rooms: vec![start_room],
-    };
+        let level = LevelImpl {
+            name: String::from("default"),
+            description: String::from("default level"),
+            rooms: vec![Rc::clone(&start_room)],
+        };
 
-    GameImpl {
-        current_room: &start_room,
-        items: Vec::new(),
-        level: level,
-        stats: HashMap::new(),
+        GameImpl {
+            current_room: Rc::clone(&start_room),
+            items: Vec::new(),
+            level: level,
+            stats: HashMap::new(),
+        }
     }
 }
 
-impl <'a,L,R>Game<L,R> for GameImpl<'a> {
-    
-    fn get_room(&self) -> &R {
-        self.current_room
+impl <'a,R,L>Game<R,L> for GameImpl<R,L> where
+    R: Room,
+    L: Level<R> 
+{    
+    type Output = Self;
+    fn room(&self) -> &R {
+        &self.current_room
     }
     
-    fn get_level(&self) -> &L {
+    fn level(&self) -> &L {
         &self.level
     }
     
-    fn get_stats(&self) -> &Stats {
+    fn stats(&self) -> &Stats {
         &self.stats
     }
     
-    fn get_items(&self) -> &[Item] {
+    fn items(&self) -> &[Item] {
         &self.items
     }
 
