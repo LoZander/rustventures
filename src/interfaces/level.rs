@@ -3,17 +3,15 @@ use std::collections::HashMap;
 use super::{game::{Direction, Id}, player::Target};
 
 pub struct Room {
-    name: String,
-    desc: String,
-    targets: Vec<Target>,
-    adj: HashMap<Direction,bool>,
-    id: Id,
+    pub name: String,
+    pub desc: String,
+    pub targets: Vec<Target>,
+    pub adj: HashMap<Direction,Room>,
+    pub id: Id,
 }
 
-pub type Pos = (i16,i16);
-
 pub struct Level {
-    name: String,
-    desc: String,
-    rooms: HashMap<Pos,Room>
+    pub name: String,
+    pub desc: String,
+    pub rooms: Vec<Room>,
 }

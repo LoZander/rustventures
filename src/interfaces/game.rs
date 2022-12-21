@@ -1,16 +1,25 @@
-use std::collections::HashMap;
-
 use super::{level::{Room, Level}, player::{Stat, Action, Stats}};
 
 
 
+#[derive(Hash)]
+#[derive(PartialEq,Eq)]
 pub enum Direction {
-    Up,
-    Down,
     Left,
     Right,
     Forward,
     Backwards,
+}
+
+impl std::fmt::Display for Direction {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", match self {
+            Direction::Left => "left",
+            Direction::Right => "right",
+            Direction::Forward => "forward",
+            Direction::Backwards => "backwards"
+        })
+    }
 }
 
 pub type Id = String;
@@ -28,13 +37,13 @@ pub enum Item {
 }
 
 pub type GameResult<T> = Result<T,String>;
-pub trait Game {
-    fn get_room(&self) -> GameResult<&'static Room>;
-    fn get_level(&self) -> GameResult<&'static Level>;
-    fn get_stats(&self) -> Stats;
-    fn get_items(&self) -> Vec<Item>;
-    fn mov(self, dir: Direction) -> GameResult<Self> where Self: Sized;
-    fn interact(self, act: Action) -> GameResult<Self> where Self: Sized;
-    fn save(self, file: String) -> GameResult<Self> where Self: Sized;
-    fn load(self, file: String) -> GameResult<Self> where Self: Sized;
+pub trait Game: Sized {
+    fn get_room(&self) -> &Room;
+    fn get_level(&self) -> &Level;
+    fn get_stats(&self) -> &Stats;
+    fn get_items(&self) -> &[Item];
+    fn mov(self, dir: Direction) -> GameResult<Self>;
+    fn interact(self, act: Action) -> GameResult<Self>;
+    fn save(self, file: String) -> GameResult<Self>;
+    fn load(self, file: String) -> GameResult<Self>;
 }

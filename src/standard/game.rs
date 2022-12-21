@@ -1,43 +1,50 @@
-use std::collections::HashMap;
+use crate::interfaces::{level::{Level, Room}, game::{Item, Game, GameResult, Direction}, player::{Action, Stats}};
 
-use crate::interfaces::{level::{Pos, Level, Room}, game::{Item, Game, GameResult, Direction}, player::{Action, Stat, Stats}};
-
-struct GameImpl {
-    current_pos: Pos,
+struct GameImpl<'a> {
+    current_room: &'a Room,
     items: Vec<Item>,
     level: Level,
+    stats: Stats,
 }
 
-impl Game for GameImpl {
+impl <'a>Game for GameImpl<'a> {
     
-    fn get_room(&self) -> GameResult<&'static Room> {
-        todo!()
+    fn get_room(&self) -> &Room {
+        self.current_room
     }
     
-    fn get_level(&self) -> GameResult<&'static Level> {
-        todo!()
+    fn get_level(&self) -> &Level {
+        &self.level
     }
     
-    fn get_stats(&self) -> Stats {
-        todo!()
+    fn get_stats(&self) -> &Stats {
+        &self.stats
     }
     
-    fn get_items(&self) -> Vec<Item> {
+    fn get_items(&self) -> &[Item] {
+        &self.items
+    }
+
+    fn mov(self, dir: Direction) -> GameResult<Self> {
+        let next = self.current_room
+                              .adj
+                              .get(&dir)
+                              .ok_or(format!("there is no room the {} direction", dir))?;
+        let game = GameImpl {
+            current_room: next,
+            ..self
+        };
+        Ok(game)
+    }
+    fn interact(self, _: Action) -> GameResult<Self> {
         todo!()
     }
 
-    fn mov(self, dir: Direction) -> GameResult<Self> where Self: Sized {
-        todo!()
-    }
-    fn interact(self, act: Action) -> GameResult<Self> where Self: Sized {
+    fn save(self, _: String) -> GameResult<Self> {
         todo!()
     }
 
-    fn save(self, file: String) -> GameResult<Self> where Self: Sized {
-        todo!()
-    }
-
-    fn load(self, file: String) -> GameResult<Self> where Self: Sized {
+    fn load(self, _: String) -> GameResult<Self> {
         todo!()
     }
 
