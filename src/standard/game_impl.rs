@@ -2,7 +2,7 @@ use std::{collections::HashMap, rc::Rc};
 
 use crate::interfaces::{level::{Level, Room}, game::{Item, Game, GameResult, Direction}, player::{Action, Stats}};
 
-use super::level::{LevelImpl, RoomImpl};
+use super::level_impl::{LevelImpl, RoomImpl};
 
 pub struct GameImpl<R,L> where
     R: Room,
@@ -14,21 +14,20 @@ pub struct GameImpl<R,L> where
     stats: Stats,
 }
 
-impl GameImpl<RoomImpl,LevelImpl> where
-{
-    pub fn new(name: String, description: String) -> GameImpl<RoomImpl,LevelImpl> {
-        let start_room = Rc::new(RoomImpl { 
+impl GameImpl<RoomImpl,LevelImpl<RoomImpl>> {
+    pub fn new(name: String, description: String) -> GameImpl<RoomImpl,LevelImpl<RoomImpl>> {
+        let start_room = Rc::new(RoomImpl::new( 
             name,
             description,
-            targets: Vec::new(),
-            adjacent_rooms: HashMap::new(),
-        });
+            Vec::new(),
+            HashMap::new(),
+        ));
 
-        let level = LevelImpl {
-            name: String::from("default"),
-            description: String::from("default level"),
-            rooms: vec![Rc::clone(&start_room)],
-        };
+        let level = LevelImpl::new(
+            String::from("default"),
+            String::from("default level"),
+            vec![Rc::clone(&start_room)],
+        );
 
         GameImpl {
             current_room: Rc::clone(&start_room),

@@ -10,8 +10,7 @@ pub trait Room {
 }
 
 pub trait Level<R: Room> {
-    fn name(&self) -> String;
-    fn description(&self) -> String;
-    fn rooms(&self) -> &[R];
-    fn insert_room(self,room: R);
+    fn name(&self) -> &str;
+    fn description(&self) -> &str;
+    fn rooms(&self) -> &[Rc<R>];
 }

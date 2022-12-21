@@ -1,2 +1,2 @@
-pub mod game;
-pub mod level;
+pub mod game_impl;
+pub mod level_impl;
