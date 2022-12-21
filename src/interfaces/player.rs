@@ -2,6 +2,8 @@ use std::collections::HashMap;
 
 use super::{game::Item, mobs::Mob};
 
+#[derive(Debug)]
+#[derive(PartialEq)]
 pub enum Stat {
     Str,
     Dex,
@@ -13,6 +15,8 @@ pub enum Stat {
 
 pub type Stats = HashMap<Stat,i8>;
 
+#[derive(Debug)]
+#[derive(PartialEq)]
 pub enum Target {
     Player,
     Mob(Mob),

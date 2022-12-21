@@ -25,11 +25,16 @@ impl std::fmt::Display for Direction {
 
 pub type Id = String;
 
+#[derive(Debug)]
+#[derive(PartialEq)]
 pub enum Effect {
     Heal(i32),
     Damage(i32),
     Buff{stat: Stat, amount: i32, duration: i32},
 }
+
+#[derive(Debug)]
+#[derive(PartialEq)]
 pub enum Item {
     Weapon{name: String, damage: i32},
     Consumable{name: String, effect: Effect, uses_left: i32, max_uses: i32},
