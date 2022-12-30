@@ -43,12 +43,12 @@ pub enum Item {
 }
 
 pub type GameResult<T> = Result<T,String>;
-pub trait Game<R,L> where 
+pub trait Game<R,L> where
     R: Room,
-    L: Level<R>, 
+    L: Level<R>,
 {
     type Output;
-    fn room(&self) -> &R;
+    fn room(&self) -> GameResult<&R>;
     fn level(&self) -> &L;
     fn stats(&self) -> &Stats;
     fn items(&self) -> &[Item];
