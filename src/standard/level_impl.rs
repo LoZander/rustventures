@@ -1,25 +1,22 @@
-use std::collections::HashMap;
+use crate::interfaces::{level::{Level, Room, Graph}, player::Target, game::Direction};
 
-use crate::interfaces::{level::{Level, Room, Pos}, player::Target, game::{Direction}};
-
+#[derive(Hash)]
+#[derive(Clone)]
 pub struct RoomImpl {
     name: String,
     description: String,
     targets: Vec<Target>,
-    adjacent: HashMap<Direction,Pos>,
 }
 
 impl RoomImpl {
     pub fn new(name: String, 
         description: String, 
-        targets: Vec<Target>, 
-        adjacent: HashMap<Direction,Pos>) -> Self
+        targets: Vec<Target>) -> Self
     {
         RoomImpl {
             name,
             description,
             targets,
-            adjacent,
         }
     }
 }
@@ -37,19 +34,20 @@ impl Room for RoomImpl {
         &self.targets[..]
     }
 
-    fn adjacent(&self, direction: &Direction) -> Option<Pos> {
-        self.adjacent.get(direction).copied()
+    fn id(&self) -> &str {
+        todo!()
     }
 }
 
+#[derive(Clone)]
 pub struct LevelImpl<R: Room> {
     name: String,
     description: String,
-    rooms: HashMap<Pos,R>,
+    rooms: Graph<String, Direction, R>,
 }
 
 impl <R: Room>LevelImpl<R> {
-    pub fn new(name: String, description: String, rooms: HashMap<Pos,R>) -> Self {
+    pub fn new(name: String, description: String, rooms: Graph<String, Direction, R>) -> Self {
         LevelImpl {
             name,
             description,
@@ -67,7 +65,7 @@ impl <R: Room>Level<R> for LevelImpl<R> {
         &self.description[..]
     }
 
-    fn rooms(&self) -> &HashMap<Pos, R> {
+    fn rooms(&self) -> &Graph<String, Direction, R> {
         &self.rooms
     }
 }

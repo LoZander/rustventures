@@ -2,6 +2,8 @@ use super::game::Id;
 
 #[derive(Debug)]
 #[derive(PartialEq)]
+#[derive(Hash)]
+#[derive(Clone)]
 enum MobType {
     Npc,
     Monster,
@@ -10,6 +12,8 @@ enum MobType {
 
 #[derive(Debug)]
 #[derive(PartialEq)]
+#[derive(Hash)]
+#[derive(Clone)]
 enum Affil {
     Good,
     Bad
@@ -17,6 +21,8 @@ enum Affil {
 
 #[derive(Debug)]
 #[derive(PartialEq)]
+#[derive(Hash)]
+#[derive(Clone)]
 pub struct Mob{
     name: String, 
     ty: MobType, 

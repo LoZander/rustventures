@@ -1,18 +1,19 @@
 use std::{collections::HashMap, rc::Rc, marker::PhantomData};
 
 use crate::interfaces::{
-    level::{Level, Room, Pos}, 
+    level::{Level, Room, Graph}, 
     game::{Item, Game, GameResult, Direction}, 
     player::{Action, Stats}};
 
 use super::level_impl::{LevelImpl, RoomImpl};
 
+#[derive(Clone)]
 pub struct GameImpl<R,L> where
-    R: Room,
-    L: Level<R>
+    R: Room + Clone,
+    L: Level<R> + Clone,
 {
     _phantom_room: PhantomData<R>,
-    current_pos: Pos,
+    current_room_id: String,
     items: Vec<Item>,
     level: L,
     stats: Stats,
@@ -24,18 +25,17 @@ impl GameImpl<RoomImpl,LevelImpl<RoomImpl>> {
             name,
             description,
             Vec::new(),
-            HashMap::new(),
         ));
 
         let level = LevelImpl::new(
             String::from("default"),
             String::from("default level"),
-            HashMap::new(),
+            Graph::new(),
         );
 
         GameImpl {
             _phantom_room: PhantomData,
-            current_pos: Pos { x: 0, y: 0 },
+            current_room_id: String::from("start_room"),
             items: Vec::new(),
             level: level,
             stats: HashMap::new(),
@@ -43,13 +43,13 @@ impl GameImpl<RoomImpl,LevelImpl<RoomImpl>> {
     }
 }
 
-impl <'a,R,L>Game<R,L> for GameImpl<R,L> where
-    R: Room,
-    L: Level<R> 
+impl <R,L>Game<R,L> for GameImpl<R,L> where
+    R: Room + Clone,
+    L: Level<R> + Clone,
 {    
     type Output = Self;
     fn room(&self) -> GameResult<&R> {
-        self.level().rooms().get(&self.current_pos).ok_or(format!("there is no room at {:?}",&self.current_pos))
+        self.level().rooms().vertices.get(&self.current_room_id).ok_or(format!("invalid room {}", self.current_room_id))
     }
     
     fn level(&self) -> &L {
@@ -65,11 +65,15 @@ impl <'a,R,L>Game<R,L> for GameImpl<R,L> where
     }
 
     fn mov(self, dir: Direction) -> GameResult<Self> {
-        let next = self.room()
-                            .and_then(|r| r.adjacent(&dir)
-                                                  .ok_or(format!("there is no room the {} direction", dir)))?;
+        let (next_id, _) = self.level()
+                            .rooms()
+                            .adjacency.get(&self.current_room_id)
+                            .ok_or(format!("there is no room in the {dir} direction"))?
+                            .into_iter()
+                            .find(|(_,d)| d == &dir)
+                            .ok_or(format!("there is no room in the {dir} direction"))?.to_owned();
         let game = GameImpl {
-            current_pos: next,
+            current_room_id: next_id,
             ..self
         };
         Ok(game)

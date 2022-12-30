@@ -1,9 +1,4 @@
-use std::collections::HashMap;
 use std::rc::Rc;
-
-
-#[cfg(test)]
-use Rustventures::interfaces::game::Direction;
 use Rustventures::interfaces::player::Target;
 use Rustventures::standard::level_impl::*;
 use Rustventures::interfaces::level::*;
@@ -13,7 +8,7 @@ fn level_has_name() {
     let level: LevelImpl<RoomImpl> = LevelImpl::new(
         String::from("test name"),
         String::from("test description"),
-        HashMap::new(),
+        Graph::new(),
     );
 
     assert_eq!("test name", level.name());
@@ -24,7 +19,7 @@ fn level_has_description() {
     let level: LevelImpl<RoomImpl> = LevelImpl::new(
         String::from("test name"),
         String::from("test description"),
-        HashMap::new(),
+        Graph::new(),
     );
 
     assert_eq!("test description", level.description());
@@ -35,23 +30,23 @@ fn level_has_rooms() {
     #[derive(Debug)]
     #[derive(PartialEq)]
     #[derive(Clone, Copy)]
+    #[derive(Hash)]
     struct RoomStub<'a>(&'a str);
     impl <'a>Room for RoomStub<'a> {
         fn name(&self) -> &str {self.0}
         fn description(&self) -> &str {""}
         fn targets(&self) -> &[Target] {&[]}
-        fn adjacent(&self, _: &Direction) -> Option<Pos> {None}
+        fn id(&self) -> &str {""}
     }
 
     let room1 = Rc::new(RoomStub("room 1"));
     let room2 = Rc::new(RoomStub("room 2"));
     let room3 = Rc::new(RoomStub("room 3"));
 
-    let mut rooms = HashMap::new();
-    rooms.insert(Pos {x: 0, y: 0}, *room1);
-    rooms.insert(Pos {x: 1, y: 0}, *room2);
-    rooms.insert(Pos {x: 2, y: 0}, *room3);
-
+    let mut rooms = Graph::new();
+    rooms.push_vertex(String::from("room1"), *room1);
+    rooms.push_vertex(String::from("room2"), *room2);
+    rooms.push_vertex(String::from("room3"), *room3);
 
     let level = LevelImpl::new(
         String::from("test name"),
@@ -59,5 +54,7 @@ fn level_has_rooms() {
         rooms.clone(),
     );
 
-    assert_eq!(&rooms, level.rooms());
+    assert_eq!(*level.rooms().vertices.get("room1").unwrap(), *room1);
+    assert_eq!(*level.rooms().vertices.get("room2").unwrap(), *room2);
+    assert_eq!(*level.rooms().vertices.get("room3").unwrap(), *room3);
 }

@@ -4,6 +4,8 @@ use super::{game::Item, mobs::Mob};
 
 #[derive(Debug)]
 #[derive(PartialEq)]
+#[derive(Hash)]
+#[derive(Clone)]
 pub enum Stat {
     Str,
     Dex,
@@ -17,6 +19,8 @@ pub type Stats = HashMap<Stat,i8>;
 
 #[derive(Debug)]
 #[derive(PartialEq)]
+#[derive(Hash)]
+#[derive(Clone)]
 pub enum Target {
     Player,
     Mob(Mob),

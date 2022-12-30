@@ -1,7 +1,7 @@
-use std::{collections::HashMap, rc::Rc};
-use Rustventures::interfaces::game::Item::{Weapon};
-use Rustventures::interfaces::player::Target::{Item};
-use Rustventures::{standard::level_impl::RoomImpl, interfaces::game::Direction};
+use std::collections::HashMap;
+use Rustventures::interfaces::game::Item::Weapon;
+use Rustventures::interfaces::player::Target::Item;
+use Rustventures::standard::level_impl::RoomImpl;
 use Rustventures::interfaces::level::Room;
 
 #[cfg(test)]

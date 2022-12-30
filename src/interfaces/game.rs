@@ -5,6 +5,7 @@ use super::{level::{Room, Level}, player::{Stat, Action, Stats}};
 #[derive(Hash)]
 #[derive(PartialEq,Eq)]
 #[derive(Clone,Copy)]
+#[derive(Debug)]
 pub enum Direction {
     Left,
     Right,
@@ -27,6 +28,8 @@ pub type Id = String;
 
 #[derive(Debug)]
 #[derive(PartialEq)]
+#[derive(Hash)]
+#[derive(Clone)]
 pub enum Effect {
     Heal(i32),
     Damage(i32),
@@ -35,6 +38,8 @@ pub enum Effect {
 
 #[derive(Debug)]
 #[derive(PartialEq)]
+#[derive(Hash)]
+#[derive(Clone)]
 pub enum Item {
     Weapon{name: String, damage: i32},
     Consumable{name: String, effect: Effect, uses_left: i32, max_uses: i32},
